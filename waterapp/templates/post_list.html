@@ -3,21 +3,36 @@
 <head>
 <meta name = "viewport" content = "width = device-width"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<title>Local Twitter Search</title>
+<title>Photo and Geo</title>
 <script type="text/javascript">
-    function startSearch(){
+    
+
+
+
+    function find_position(){
         var gps = navigator.geolocation;
+        var position = undefined;
         if (gps){
-            gps.getCurrentPosition(searchTwitter, 
-                   function(error){
-                alert("Got an error, code: " + error.code + " message: "
-+ error.message);
-             });
+            gps.getCurrentPosition(work_with_position, 
+                                   function(error){alert("Got an error, code: " + error.code + " message: "+ error.message);});
         } else {
-            alert()
-            searchTwitter();
+            work_with_position();
         }
     }
+
+    function work_with_position(position){
+        result = document.getElementById("results")
+
+        if (position){
+            var lat = position.coords.latitude;
+            var long = position.coords.longitude;
+            result.textContent = "lat = " + lat + "; " + "long = " + long + ";"            
+        } else {
+            result.textContent =  " Error Error Error"
+        }
+    }
+
+
     function searchTwitter(position){
         var query = "http://search.twitter.com/search.json?callback=showResults&q=";
         query += $("kwBox").value;
@@ -60,10 +75,9 @@
 </script>
 </head>
 <body>
-    <div id="main">
-        <label for="kwBox">Search Twitter:</label>
-        <input type="text" id="kwBox"/>
-        <input type="button" value="Go!" onclick="startSearch()"/>
+    <h1>Position search</h1>
+    <div id="main">        
+        <input type="button" value="Go!" onclick="find_position()"/>
     </div>
     <div id="results"></div>
     
