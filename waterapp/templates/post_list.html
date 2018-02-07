@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name = "viewport" content = "width = device-width"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<title>Local Twitter Search</title>
+<script type="text/javascript">
+    function startSearch(){
+        var gps = navigator.geolocation;
+        if (gps){
+            gps.getCurrentPosition(searchTwitter, 
+                   function(error){
+                alert("Got an error, code: " + error.code + " message: "
++ error.message);
+             });
+        } else {
+            alert()
+            searchTwitter();
+        }
+    }
+    function searchTwitter(position){
+        var query = "http://search.twitter.com/search.json?callback=showResults&q=";
+        query += $("kwBox").value;
+        if (position){
+            var lat = position.coords.latitude;
+            var long = position.coords.longitude;
+            alert(lat + "," + long + ",50mi")
+            result = document.getElementById("results")
+            result.textContent = lat + "," + long + ",50mi"
+            query += "&geocode=" + escape(lat + "," + long + ",50mi");
+        }
+        var script = document.createElement("script");
+        script.src = query;
+        document.getElementsByTagName("head")[0].appendChild(script);
+    }
+
+    // Grab elements, create settings, etc.
+    var video = document.getElementById('video');
+
+    // Get access to the camera!
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Not adding `{ audio: true }` since we only want video now
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+        });
+    }
+
+// Elements for taking the snapshot
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var video = document.getElementById('video');
+
+    // Trigger photo take
+    document.getElementById("snap").addEventListener("click", function() {
+        context.drawImage(video, 0, 0, 640, 480);
+    });
+
+
+</script>
+</head>
+<body>
+    <div id="main">
+        <label for="kwBox">Search Twitter:</label>
+        <input type="text" id="kwBox"/>
+        <input type="button" value="Go!" onclick="startSearch()"/>
+    </div>
+    <div id="results"></div>
+    
+    <div>
+        <video id="video" width="640" height="480" autoplay="" src="blob:https://davidwalsh.name/3fd56005-0e27-4426-b292-08cff68644ed"></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+</body>
+</html>
